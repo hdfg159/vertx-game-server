@@ -1,0 +1,5 @@
+{
+  "log": true,
+  "port": 9998,
+  "maxConnection": 5000
+}

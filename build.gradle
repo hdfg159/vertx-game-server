@@ -1,0 +1,52 @@
+plugins {
+	id 'java'
+	id 'groovy'
+	id 'application'
+	id "com.github.johnrengelman.shadow" version "5.2.0"
+}
+
+group = "com.hdfg159"
+version = "1.0.0-SNAPSHOT"
+
+repositories {
+	maven {setUrl("https://oss.sonatype.org/content/repositories/snapshots")}
+	mavenCentral()
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
+}
+
+application {
+	mainClassName = "io.github.hdfg159.Main"
+}
+
+def vertxVersion = "4.0.0.Beta1"
+def log4jVersion = "2.13.3"
+def protobufVersion = "3.12.2"
+def caffeineVersion = "2.8.5"
+def jacksonVersion = "2.10.2"
+def groovyVersion = "3.0.3"
+
+dependencies {
+	implementation "io.vertx:vertx-rx-java2:$vertxVersion"
+	
+	implementation "io.vertx:vertx-lang-groovy:$vertxVersion"
+	implementation "org.codehaus.groovy:groovy-jmx:${groovyVersion}"
+	
+	implementation "io.vertx:vertx-mongo-client:$vertxVersion"
+	
+	implementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
+	
+	implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
+	
+	implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
+	
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+	implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_11
+	targetCompatibility = JavaVersion.VERSION_11
+}

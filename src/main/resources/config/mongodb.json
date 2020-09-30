@@ -1,0 +1,9 @@
+{
+  "db_name": "game",
+  "host": "127.0.0.1",
+  "port": 27017,
+  "minPoolSize": 10,
+  "maxPoolSize": 50,
+  "maxIdleTimeMS": 300000,
+  "maxLifeTimeMS": 3600000
+}
