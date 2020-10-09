@@ -1,5 +1,6 @@
 package io.github.hdfg159.game.service.avatar
 
+import com.google.protobuf.Message
 import groovy.util.logging.Slf4j
 import io.github.hdfg159.game.domain.dto.EventMessage
 import io.github.hdfg159.game.domain.dto.GameMessage
@@ -228,7 +229,7 @@ class AvatarService extends AbstractService {
 	 * @param message 消息
 	 * @return
 	 */
-	def pushMsg(String userId, GameMessage.Message message) {
+	def pushMsg(String userId, Message message) {
 		def channel = avatarData.getChannel(userId)
 		if (channel && channel.isActive()) {
 			channel.writeAndFlush(message)
@@ -241,7 +242,7 @@ class AvatarService extends AbstractService {
 	 * @param message 消息
 	 * @return
 	 */
-	def pushAllMsg(List<String> userIds, GameMessage.Message message) {
+	def pushAllMsg(List<String> userIds, Message message) {
 		userIds.collect {avatarData.getChannel(it)}
 				.findAll {it && it.isActive()}
 				.each {it.writeAndFlush(message)}

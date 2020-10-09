@@ -81,8 +81,12 @@ abstract class AbstractService extends AbstractVerticle {
 					
 					Maybe.fromCallable({closure.call(headers, data) as GameMessage.Message})
 							.subscribeOn(io())
-							.doOnSuccess({flushMsg(channelId, it)})
-							.doOnError({flushMsg(channelId, GameUtils.resMsg(RES_PUSH, ERROR))})
+							.doOnSuccess({
+								flushMsg(channelId, it)
+							})
+							.doOnError({
+								flushMsg(channelId, GameUtils.resMsg(RES_PUSH, ERROR))
+							})
 				})
 				.subscribe({
 					log.debug "[${address}] invoke request success"
@@ -93,7 +97,7 @@ abstract class AbstractService extends AbstractVerticle {
 				})
 	}
 	
-	private static void flushMsg(String channelId, Message it) {
+	protected static void flushMsg(String channelId, Message it) {
 		if (channelId && it) {
 			def channel = CHANNEL_DATA?.channelMap?.get(channelId)
 			if (channel && channel.isActive()) {

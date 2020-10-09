@@ -21,7 +21,7 @@ import static io.reactivex.schedulers.Schedulers.io
  * Created by hdfg159 on 2020/7/19 10:03.
  */
 @Slf4j
-abstract class AbstractDataManager<D extends IData<String>> extends AbstractVerticle {
+abstract class AbstractDataManager<D extends TData<String>> extends AbstractVerticle {
 	MongoClient client
 	LoadingCache<String, D> cache = cacheBuilder()
 	

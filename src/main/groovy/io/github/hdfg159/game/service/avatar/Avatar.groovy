@@ -1,7 +1,7 @@
 package io.github.hdfg159.game.service.avatar
 
 import groovy.transform.Canonical
-import io.github.hdfg159.game.data.IData
+import io.github.hdfg159.game.data.TData
 
 /**
  * Project:starter
@@ -13,11 +13,7 @@ import io.github.hdfg159.game.data.IData
  * @author zhangzhenyu
  */
 @Canonical
-class Avatar implements Serializable, IData<String> {
-	/**
-	 * 用户 ID
-	 */
-	String id
+class Avatar implements TData<String> {
 	/**
 	 * 用户名
 	 */

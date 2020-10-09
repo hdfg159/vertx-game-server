@@ -7,17 +7,11 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * Package:io.github.hdfg159.game.data
  * Created by hdfg159 on 2020/7/19 10:16.
  */
-interface IData<K> extends Serializable {
+trait TData<K> implements Serializable {
 	/**
-	 * 获取ID
+	 * ID
 	 * @return ID
 	 */
 	@JsonProperty("_id")
-	K getId()
-	
-	/**
-	 * 设置ID
-	 * @param id
-	 */
-	void setId(K id)
+	K id
 }
