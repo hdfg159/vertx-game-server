@@ -22,7 +22,7 @@ import io.netty.handler.timeout.IdleStateEvent
 class HeartbeatHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-		if (!evt instanceof IdleStateEvent) {
+		if (!(evt instanceof IdleStateEvent)) {
 			super.userEventTriggered(ctx, evt)
 			return
 		}
