@@ -15,8 +15,8 @@ enum ProtocolEnums {
 	/**
 	 * 1~1000预留编码
 	 */
-	REQ_PUSH(1, Object.class),
-	RES_PUSH(-1, Object.class),
+	REQ_PUSH(1, null),
+	RES_PUSH(-1, null),
 	/**
 	 * 心跳
 	 */
