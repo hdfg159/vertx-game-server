@@ -1,6 +1,7 @@
 package io.github.hdfg159
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.DeserializationFeature
 import groovy.jmx.builder.JmxBuilder
 import groovy.util.logging.Slf4j
 import io.github.hdfg159.game.GameVerticle
@@ -23,7 +24,7 @@ import io.vertx.reactivex.core.Vertx
 class Main {
 	static main(args) {
 		// vert.x 序列化 json 忽略 null
-		DatabindCodec.mapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
+		DatabindCodec.mapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 		Vertx vx = Vertx.vertx()
 		
 		jmx()
