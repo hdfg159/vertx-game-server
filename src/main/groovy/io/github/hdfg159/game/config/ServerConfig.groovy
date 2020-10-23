@@ -9,4 +9,6 @@ class ServerConfig implements Serializable {
 	Boolean log
 	Integer port
 	Integer maxConnection
+	Boolean websocket
+	String websocketPath
 }

@@ -76,7 +76,7 @@ class GameClient {
 							.build()
 			)
 			
-			(1..999).each {
+			(1..3).each {
 				channel.writeAndFlush(login)
 			}
 			

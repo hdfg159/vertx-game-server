@@ -2,12 +2,13 @@ package io.github.hdfg159.game.server
 
 import io.github.hdfg159.game.config.ServerConfig
 import io.github.hdfg159.game.domain.dto.GameMessage
-import io.github.hdfg159.game.handler.ConnectionHandler
-import io.github.hdfg159.game.handler.GameMessageDispatcher
-import io.github.hdfg159.game.handler.LogHandler
-import io.github.hdfg159.game.handler.MessageHandler
+import io.github.hdfg159.game.handler.*
 import io.netty.channel.Channel
 import io.netty.channel.ChannelInitializer
+import io.netty.handler.codec.http.HttpObjectAggregator
+import io.netty.handler.codec.http.HttpServerCodec
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler
+import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler
 import io.netty.handler.codec.protobuf.ProtobufDecoder
 import io.netty.handler.codec.protobuf.ProtobufEncoder
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder
@@ -41,13 +42,26 @@ class GameServerChannelInitializer extends ChannelInitializer<Channel> {
 	protected void initChannel(Channel ch) throws Exception {
 		def pipeline = ch.pipeline()
 		pipeline.addLast(new IdleStateHandler(10 * 60, 0, 0, TimeUnit.SECONDS))
-				.addLast(new ProtobufVarint32FrameDecoder())
+		
+		if (config.websocket) {
+			pipeline.addLast(new HttpServerCodec())
+					.addLast(new HttpObjectAggregator(65536))
+					
+					.addLast(new WebSocketServerCompressionHandler())
+					.addLast(new WebSocketServerProtocolHandler(config.websocketPath, null))
+					.addLast(new WebSocketBinaryMessageOutHandler())
+					.addLast(new WebSocketBinaryMessageInHandler())
+		}
+		
+		pipeline.addLast(new ProtobufVarint32FrameDecoder())
 				.addLast(new ProtobufDecoder(GameMessage.Message.getDefaultInstance()))
 				.addLast(new ProtobufVarint32LengthFieldPrepender())
 				.addLast(new ProtobufEncoder())
+		
 		if (config.log) {
 			pipeline.addLast(new LogHandler())
 		}
+		
 		pipeline.addLast(new ConnectionHandler(config.maxConnection, dispatcher))
 				.addLast(new MessageHandler(vertx, dispatcher))
 	}
