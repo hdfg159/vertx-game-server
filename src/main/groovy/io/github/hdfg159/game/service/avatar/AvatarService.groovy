@@ -242,7 +242,7 @@ class AvatarService extends AbstractService {
 	 * @param message 消息
 	 * @return
 	 */
-	def pushAllMsg(List<String> userIds, Message message) {
+	def pushAllMsg(Collection<String> userIds, Message message) {
 		userIds.collect {avatarData.getChannel(it)}
 				.findAll {it && it.isActive()}
 				.each {it.writeAndFlush(message)}
