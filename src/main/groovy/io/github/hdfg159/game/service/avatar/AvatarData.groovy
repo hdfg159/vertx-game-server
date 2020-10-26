@@ -50,7 +50,6 @@ class AvatarData extends AbstractDataManager<Avatar> {
 		
 		def avatar = getById(userId)
 		avatar?.loginTime = LocalDateTime.now()
-		avatar?.online = true
 		
 		userChannel.put(userId, channel)
 	}
@@ -68,7 +67,6 @@ class AvatarData extends AbstractDataManager<Avatar> {
 		if (userId) {
 			def avatar = getById(userId)
 			avatar?.offlineTime = LocalDateTime.now()
-			avatar?.online = false
 		}
 		userId
 	}
@@ -177,7 +175,6 @@ class AvatarData extends AbstractDataManager<Avatar> {
 			allOnlineIds.each {id ->
 				def avatar = getById(id)
 				avatar?.offlineTime = LocalDateTime.now()
-				avatar?.online = false
 			}
 		}).subscribeOn(io()).concatWith(super.rxStop())
 	}

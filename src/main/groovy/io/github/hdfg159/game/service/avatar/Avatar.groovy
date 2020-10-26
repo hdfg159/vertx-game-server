@@ -36,8 +36,4 @@ class Avatar implements TData<String> {
 	 * 最后下线时间
 	 */
 	LocalDateTime offlineTime
-	/**
-	 * 是否在线
-	 */
-	boolean online
 }
