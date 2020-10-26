@@ -5,6 +5,7 @@ import io.github.hdfg159.game.domain.dto.GameMessage
 import io.github.hdfg159.game.enumeration.ProtocolEnums
 import io.github.hdfg159.game.util.GameUtils
 import io.netty.bootstrap.Bootstrap
+import io.netty.channel.Channel
 import io.netty.channel.ChannelFuture
 import io.netty.channel.EventLoopGroup
 import io.netty.channel.nio.NioEventLoopGroup
@@ -49,47 +50,41 @@ class GameClient {
 		
 		// 下面业务代码
 		if (channel.active) {
-			// (1..1000).each {
-			// 	def username = UUID.randomUUID().toString()
-			// 	def password = "admin"
-			// 	def reg = GameUtils.reqMsg(ProtocolEnums.REQ_REGISTER,
-			// 			GameMessage.RegisterReq.newBuilder()
-			// 					.setUsername(username)
-			// 					.setPassword(password)
-			// 					.build())
-			// 	channel.writeAndFlush(reg)
-			
-			def username = "admin"
-			def password = "admin"
-			// def reg = GameUtils.reqMsg(ProtocolEnums.REQ_REGISTER,
-			// 		GameMessage.RegisterReq.newBuilder()
-			// 				.setUsername(username)
-			// 				.setPassword(password)
-			// 				.build())
-			// channel.writeAndFlush(reg)
-			// Thread.sleep(1000L)
-			def login = GameUtils.reqMsg(
-					ProtocolEnums.REQ_LOGIN,
-					GameMessage.LoginReq.newBuilder()
-							.setUsername(username)
-							.setPassword(password)
-							.build()
-			)
-			
-			(1..3).each {
-				channel.writeAndFlush(login)
-			}
-			
-			// Thread.sleep(3000L)
-			// def test1 = GameUtils.reqMsg(
-			// 		ProtocolEnums.REQ_TEST,
-			// 		GameMessage.TestReq.newBuilder()
-			// 				.setStr("asdasd")
-			// 				.build()
-			// )
-			// channel.writeAndFlush(test1)
-			// }
+			// register(channel)
+			login(channel)
+			// test(channel)
 		}
+	}
+	
+	def static register(Channel channel) {
+		// def username = UUID.randomUUID().toString()
+		def username = "admin"
+		def password = "admin"
+		def req = GameMessage.RegisterReq.newBuilder()
+				.setUsername(username)
+				.setPassword(password)
+				.build()
+		def reg = GameUtils.reqMsg(ProtocolEnums.REQ_REGISTER, req)
+		channel.writeAndFlush(reg)
+	}
+	
+	def static test(Channel channel) {
+		def req = GameMessage.TestReq.newBuilder()
+				.setStr("test")
+				.build()
+		def test = GameUtils.reqMsg(ProtocolEnums.REQ_TEST, req)
+		channel.writeAndFlush(test)
+	}
+	
+	def static login(channel) {
+		def username = "admin"
+		def password = "admin"
+		def req = GameMessage.LoginReq.newBuilder()
+				.setUsername(username)
+				.setPassword(password)
+				.build()
+		def login = GameUtils.reqMsg(ProtocolEnums.REQ_LOGIN, req)
+		channel.writeAndFlush(login)
 	}
 	
 	void stop() {

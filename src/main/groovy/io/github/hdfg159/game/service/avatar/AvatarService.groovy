@@ -11,6 +11,8 @@ import io.github.hdfg159.game.util.GameUtils
 import io.reactivex.Completable
 import io.vertx.reactivex.core.MultiMap
 
+import java.time.LocalDateTime
+
 import static io.github.hdfg159.game.constant.GameConsts.ATTR_AVATAR
 import static io.github.hdfg159.game.constant.GameConsts.ATTR_NAME_CHANNEL_ID
 import static io.github.hdfg159.game.enumeration.CodeEnums.*
@@ -170,11 +172,10 @@ class AvatarService extends AbstractService {
 			return GameUtils.resMsg(RES_REGISTER, REGISTER_INFO_ILLEGAL)
 		}
 		
-		def now = new Date()
 		def registerAvatar = new Avatar(
 				username: username,
 				password: password,
-				registerTime: now
+				registerTime: LocalDateTime.now()
 		)
 		// 保存缓存，全局数据加入相关信息
 		avatarData.saveCache(registerAvatar)

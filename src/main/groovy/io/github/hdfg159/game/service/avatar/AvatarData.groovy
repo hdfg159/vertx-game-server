@@ -7,6 +7,7 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import io.vertx.core.json.JsonObject
 
+import java.time.LocalDateTime
 import java.util.concurrent.ConcurrentHashMap
 
 import static io.reactivex.schedulers.Schedulers.io
@@ -47,7 +48,9 @@ class AvatarData extends AbstractDataManager<Avatar> {
 			return null
 		}
 		
-		getById(userId)?.lastLoginTime = new Date()
+		def avatar = getById(userId)
+		avatar?.loginTime = LocalDateTime.now()
+		avatar?.online = true
 		
 		userChannel.put(userId, channel)
 	}
@@ -64,7 +67,8 @@ class AvatarData extends AbstractDataManager<Avatar> {
 		}
 		if (userId) {
 			def avatar = getById(userId)
-			avatar?.lastOfflineTime = new Date()
+			avatar?.offlineTime = LocalDateTime.now()
+			avatar?.online = false
 		}
 		userId
 	}
@@ -171,7 +175,9 @@ class AvatarData extends AbstractDataManager<Avatar> {
 		Completable.fromCallable({
 			// 设置所有玩家离线时间
 			allOnlineIds.each {id ->
-				getById(id)?.lastOfflineTime = new Date()
+				def avatar = getById(id)
+				avatar?.offlineTime = LocalDateTime.now()
+				avatar?.online = false
 			}
 		}).subscribeOn(io()).concatWith(super.rxStop())
 	}
