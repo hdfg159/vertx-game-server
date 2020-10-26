@@ -240,11 +240,12 @@ class AvatarService extends AbstractService {
 	/**
 	 * 全部在线推送消息
 	 * @param userIds 用户 ID 列表
+	 * @param excludeUserIds 排除的用户 ID
 	 * @param message 消息
-	 * @return
 	 */
-	def pushAllMsg(Collection<String> userIds, Message message) {
-		userIds.collect {avatarData.getChannel(it)}
+	def pushAllMsg(Collection<String> userIds, Collection<String> excludeUserIds, Message message) {
+		userIds.findAll {!excludeUserIds.contains(it)}
+				.collect {avatarData.getChannel(it)}
 				.findAll {it && it.isActive()}
 				.each {it.writeAndFlush(message)}
 	}
