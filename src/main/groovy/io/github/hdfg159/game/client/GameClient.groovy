@@ -45,14 +45,26 @@ class GameClient {
 		}
 		
 		def channel = startFuture.channel()
-		def cmd = System.in.newReader().readLine()
-		log.info " CMD:${cmd} ".center(100, "=")
-		
-		// 下面业务代码
-		if (channel.active) {
-			// register(channel)
-			login(channel)
-			// test(channel)
+		for (; ;) {
+			def cmd = System.in.newReader().readLine()
+			log.info " CMD:${cmd} ".center(100, "=")
+			
+			// 下面业务代码
+			if (channel.active) {
+				switch (cmd) {
+					case "1002":
+						login(channel)
+						break
+					case "1003":
+						register(channel)
+						break
+					case "9999999":
+						test(channel)
+						break
+					default:
+						break
+				}
+			}
 		}
 	}
 	
