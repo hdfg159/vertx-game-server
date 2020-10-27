@@ -17,7 +17,6 @@ import io.vertx.reactivex.core.eventbus.EventBus
 
 import static io.github.hdfg159.game.constant.GameConsts.ATTR_NAME_CHANNEL_ID
 import static io.github.hdfg159.game.enumeration.CodeEnums.ERROR
-import static io.github.hdfg159.game.enumeration.ProtocolEnums.RES_PUSH
 import static io.reactivex.schedulers.Schedulers.io
 
 /**
@@ -85,7 +84,7 @@ abstract class AbstractService extends AbstractVerticle {
 								flushMsg(channelId, it)
 							})
 							.doOnError({
-								flushMsg(channelId, GameUtils.resMsg(RES_PUSH, ERROR))
+								flushMsg(channelId, GameUtils.resMsg(protocol, ERROR))
 							})
 				})
 				.subscribe({
