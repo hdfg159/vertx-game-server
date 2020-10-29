@@ -45,12 +45,11 @@ class LogHandler extends LoggingHandler {
 	private static String formatProtoBuf(ChannelHandlerContext ctx, String eventName, GameMessage.Message msg) {
 		def protocol = ProtocolEnums.valOf(msg.protocol)
 		def data = msg.data
-		if (protocol && protocol.requestClass) {
+		if (data.toByteArray() && protocol && protocol.requestClass) {
 			def unpackData = data.unpack(protocol.requestClass)
 			return "${ctx.channel()} [${eventName}][${msg.protocol}][${msg.code}]:\n${TextFormat.printer().escapingNonAscii(false).printToString(unpackData)}"
 		}
 		
-		return "${ctx.channel()} ${eventName} : not support data"
+		return "${ctx.channel()} ${eventName} [${msg.protocol}][${msg.code}]: not support data"
 	}
-	
 }
