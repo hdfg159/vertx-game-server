@@ -3,6 +3,7 @@ package io.github.hdfg159.game.handler
 import com.google.protobuf.TextFormat
 import groovy.util.logging.Slf4j
 import io.github.hdfg159.game.domain.dto.GameMessage
+import io.github.hdfg159.game.enumeration.CodeEnums
 import io.github.hdfg159.game.enumeration.ProtocolEnums
 import io.netty.channel.ChannelHandler
 import io.netty.channel.ChannelHandlerContext
@@ -44,12 +45,14 @@ class LogHandler extends LoggingHandler {
 	
 	private static String formatProtoBuf(ChannelHandlerContext ctx, String eventName, GameMessage.Message msg) {
 		def protocol = ProtocolEnums.valOf(msg.protocol)
+		def code = CodeEnums.valOf(msg.code)
 		def data = msg.data
+		
 		if (data.toByteArray() && protocol && protocol.requestClass) {
 			def unpackData = data.unpack(protocol.requestClass)
-			return "${ctx.channel()} [${eventName}][${msg.protocol}][${msg.code}]:\n${TextFormat.printer().escapingNonAscii(false).printToString(unpackData)}"
+			return "${ctx.channel()} ${eventName} [${protocol?.name()}][${msg.protocol}] [${code?.name()}][${msg.code}]:\n${TextFormat.printer().escapingNonAscii(false).printToString(unpackData)}"
 		}
 		
-		return "${ctx.channel()} ${eventName} [${msg.protocol}][${msg.code}]: not support data"
+		return "${ctx.channel()} ${eventName} [${protocol?.name()}][${msg.protocol}] [${code?.name()}][${msg.code}]: not support data"
 	}
 }

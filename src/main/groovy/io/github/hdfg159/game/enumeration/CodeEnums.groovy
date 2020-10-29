@@ -47,4 +47,23 @@ enum CodeEnums {
 	CodeEnums(long code) {
 		this.code = code
 	}
+	
+	
+	boolean success() {
+		code == SUCCESS.code
+	}
+	
+	static CodeEnums valOf(Long code) {
+		if (!code) {
+			return null
+		}
+		
+		for (CodeEnums c in values()) {
+			if (c.code == code) {
+				return c
+			}
+		}
+		
+		return null
+	}
 }
