@@ -2,6 +2,7 @@ package io.github.hdfg159.game.service
 
 import com.google.protobuf.Any
 import com.google.protobuf.Message
+import com.google.protobuf.TextFormat
 import groovy.util.logging.Slf4j
 import io.github.hdfg159.game.domain.dto.EventMessage
 import io.github.hdfg159.game.domain.dto.GameMessage
@@ -132,7 +133,7 @@ abstract class AbstractService extends AbstractVerticle {
 						def data = event.data.unpack(eventEnums.clazz)
 						def headers = message.headers()
 						
-						log.info "[${address}] handle event:\n${event}"
+						log.info "[${address}] handle event:\n${TextFormat.printer().escapingNonAscii(false).printToString(data)}"
 						run.call(headers, data)
 					}).subscribeOn(io())
 				})

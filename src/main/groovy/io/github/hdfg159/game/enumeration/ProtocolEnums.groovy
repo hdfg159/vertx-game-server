@@ -57,4 +57,18 @@ enum ProtocolEnums {
 	String address() {
 		"${GameConsts.ADDRESS_PROTOCOL}${protocol}"
 	}
+	
+	static ProtocolEnums valOf(Long protocol) {
+		if (!protocol) {
+			return null
+		}
+		
+		for (ProtocolEnums p in values()) {
+			if (p.protocol == protocol) {
+				return p
+			}
+		}
+		
+		return null
+	}
 }
