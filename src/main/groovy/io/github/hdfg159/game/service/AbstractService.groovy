@@ -86,7 +86,9 @@ abstract class AbstractService extends AbstractVerticle {
 							})
 							.doOnError({
 								flushMsg(channelId, GameUtils.resMsg(protocol, ERROR))
+								log.error "[${address}] invoke request error:${it.message}", it
 							})
+							.onErrorComplete()
 				})
 				.subscribe({
 					log.debug "[${address}] invoke request success"
@@ -127,15 +129,21 @@ abstract class AbstractService extends AbstractVerticle {
 		eventBus.consumer(address)
 				.toFlowable()
 				.flatMapCompletable({message ->
-					Completable.fromRunnable({
-						def bytes = message.body() as byte[]
-						def event = EventMessage.Event.parseFrom(bytes)
-						def data = event.data.unpack(eventEnums.clazz)
-						def headers = message.headers()
-						
-						log.info "[${address}] handle event:\n${TextFormat.printer().escapingNonAscii(false).printToString(data)}"
-						run.call(headers, data)
-					}).subscribeOn(io())
+					Completable
+							.fromRunnable({
+								def bytes = message.body() as byte[]
+								def event = EventMessage.Event.parseFrom(bytes)
+								def data = event.data.unpack(eventEnums.clazz)
+								def headers = message.headers()
+								
+								log.info "[${address}] handle event:\n${TextFormat.printer().escapingNonAscii(false).printToString(data)}"
+								run.call(headers, data)
+							})
+							.subscribeOn(io())
+							.doOnError({
+								log.error "[${address}] invoke event error:[${it.message}]", it
+							})
+							.onErrorComplete()
 				})
 				.subscribe({
 					log.debug "[${address}] event complete"
