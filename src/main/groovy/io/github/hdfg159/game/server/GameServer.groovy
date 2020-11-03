@@ -47,11 +47,11 @@ class GameServer {
 	
 	void stop() {
 		try {
-			startFuture.channel().close()
+			startFuture?.channel()?.close()
 			log.info("${this.class.simpleName} channel stopped success")
 		} finally {
-			childGroup.shutdownGracefully().sync()
-			group.shutdownGracefully().sync()
+			childGroup?.shutdownGracefully()?.sync()
+			group?.shutdownGracefully()?.sync()
 			log.info("${this.class.simpleName} event loop group stopped success")
 		}
 		log.info("${this.class.simpleName} stopped success")
