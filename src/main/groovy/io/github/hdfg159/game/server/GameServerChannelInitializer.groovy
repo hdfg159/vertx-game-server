@@ -51,12 +51,17 @@ class GameServerChannelInitializer extends ChannelInitializer<Channel> {
 					.addLast(new WebSocketServerProtocolHandler(config.websocketPath, null))
 					.addLast(new WebSocketBinaryMessageOutHandler())
 					.addLast(new WebSocketBinaryMessageInHandler())
+		} else {
+			pipeline.addLast(new ProtobufVarint32FrameDecoder())
 		}
 		
-		pipeline.addLast(new ProtobufVarint32FrameDecoder())
-				.addLast(new ProtobufDecoder(GameMessage.Message.getDefaultInstance()))
-				.addLast(new ProtobufVarint32LengthFieldPrepender())
-				.addLast(new ProtobufEncoder())
+		pipeline.addLast(new ProtobufDecoder(GameMessage.Message.getDefaultInstance()))
+		
+		if (!config.websocket) {
+			pipeline.addLast(new ProtobufVarint32LengthFieldPrepender())
+		}
+		
+		pipeline.addLast(new ProtobufEncoder())
 		
 		if (config.log) {
 			pipeline.addLast(new LogHandler())
