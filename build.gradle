@@ -21,11 +21,11 @@ application {
 	mainClassName = "io.github.hdfg159.Main"
 }
 
-def vertxVersion = "4.0.0.Beta3"
+def vertxVersion = "4.0.0.CR1"
 def log4jVersion = "2.13.3"
 def protobufVersion = "3.12.2"
-def caffeineVersion = "2.8.5"
-def jacksonVersion = "2.10.2"
+def caffeineVersion = "2.8.6"
+def jacksonVersion = "2.11.3"
 def groovyVersion = "3.0.6"
 
 dependencies {
