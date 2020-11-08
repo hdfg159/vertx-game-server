@@ -1,8 +1,10 @@
 package io.github.hdfg159.game
 
 import groovy.util.logging.Slf4j
+import io.github.hdfg159.game.service.avatar.AvatarData
 import io.github.hdfg159.game.service.avatar.AvatarService
 import io.github.hdfg159.game.service.farm.FarmService
+import io.github.hdfg159.game.service.log.GameLogData
 import io.github.hdfg159.game.service.log.LogService
 import io.reactivex.Completable
 import io.vertx.reactivex.core.AbstractVerticle
@@ -18,11 +20,19 @@ import io.vertx.reactivex.core.AbstractVerticle
 class GameVerticle extends AbstractVerticle {
 	@Override
 	Completable rxStart() {
-		log.info "deploy ${this.class.simpleName}"
+		def dataManagers = Completable.mergeArray(
+				this.@vertx.rxDeployVerticle(GameLogData.instance).ignoreElement(),
+				
+				this.@vertx.rxDeployVerticle(AvatarData.instance).ignoreElement(),
+		)
 		
-		this.@vertx.rxDeployVerticle(LogService.getInstance()).ignoreElement()
+		def services = this.@vertx.rxDeployVerticle(LogService.getInstance()).ignoreElement()
 				.concatWith(this.@vertx.rxDeployVerticle(AvatarService.getInstance()).ignoreElement())
 				.mergeWith(this.@vertx.rxDeployVerticle(FarmService.getInstance()).ignoreElement())
+		
+		dataManagers.concatWith(services).doOnComplete({
+			log.info "deploy ${this.class.simpleName} complete"
+		})
 	}
 	
 	@Override

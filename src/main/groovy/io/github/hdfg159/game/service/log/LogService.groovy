@@ -14,7 +14,7 @@ class LogService extends AbstractService {
 	
 	@Override
 	Completable init() {
-		this.@vertx.rxDeployVerticle(logData).ignoreElement()
+		Completable.complete()
 	}
 	
 	@Override

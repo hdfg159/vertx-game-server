@@ -27,9 +27,9 @@ import static io.github.hdfg159.game.enumeration.ProtocolEnums.*
 @Slf4j
 @Singleton
 class AvatarService extends AbstractService {
-	AvatarData avatarData = AvatarData.instance
+	def avatarData = AvatarData.instance
 	
-	def logService = LogService.getInstance()
+	def logService = LogService.instance
 	
 	@Override
 	Completable init() {
@@ -41,12 +41,12 @@ class AvatarService extends AbstractService {
 		handleEvent(EventEnums.ONLINE, onlineEvent)
 		handleEvent(EventEnums.OFFLINE, offlineEvent)
 		
-		this.@vertx.rxDeployVerticle(avatarData).ignoreElement()
+		Completable.complete()
 	}
 	
 	@Override
 	Completable destroy() {
-		return Completable.complete()
+		Completable.complete()
 	}
 	
 	def login = {headers, params ->
