@@ -1,6 +1,7 @@
 package io.github.hdfg159.game.client
 
 import groovy.util.logging.Slf4j
+import io.github.hdfg159.common.util.IdUtils
 import io.github.hdfg159.game.domain.dto.GameMessage
 import io.github.hdfg159.game.enumeration.ProtocolEnums
 import io.github.hdfg159.game.util.GameUtils
@@ -69,9 +70,11 @@ class GameClient {
 	}
 	
 	def static register(Channel channel) {
-		// def username = UUID.randomUUID().toString()
-		def username = "admin"
-		def password = "admin"
+		// def username = "admin"
+		// def password = "admin"
+		def str = IdUtils.idStr
+		def username = str
+		def password = str
 		def req = GameMessage.RegisterReq.newBuilder()
 				.setUsername(username)
 				.setPassword(password)

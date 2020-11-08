@@ -45,7 +45,15 @@ class GameConsts {
 	/**
 	 * mongodb 配置文件相对路径
 	 */
-	static final String MONGO_CONFIG = 'config/mongodb.json'
+	static final String MONGO_CONFIG = 'config/db_game.json'
+	/**
+	 * mongodb 共享数据源名称 日志库
+	 */
+	static final String LOG_MONGO_DATA_SOURCE = 'common-log'
+	/**
+	 * mongodb 配置文件相对路径 日志库
+	 */
+	static final String LOG_MONGO_CONFIG = 'config/db_log.json'
 	/**
 	 * 服务器配置文件相对路径
 	 */

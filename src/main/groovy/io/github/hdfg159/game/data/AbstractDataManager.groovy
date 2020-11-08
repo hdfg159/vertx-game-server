@@ -116,10 +116,7 @@ abstract class AbstractDataManager<D extends TData<String>> extends AbstractVert
 	 * @return 数据
 	 */
 	D getById(String id) {
-		if (id) {
-			return cache.get(id)
-		}
-		return null
+		id ? cache.get(id) : null
 	}
 	
 	/**

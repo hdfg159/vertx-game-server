@@ -5,10 +5,13 @@ import groovy.util.logging.Slf4j
 import io.github.hdfg159.game.domain.dto.EventMessage
 import io.github.hdfg159.game.domain.dto.GameMessage
 import io.github.hdfg159.game.enumeration.EventEnums
-import io.github.hdfg159.game.enumeration.ProtocolEnums
+import io.github.hdfg159.game.enumeration.LogEnums
 import io.github.hdfg159.game.service.AbstractService
+import io.github.hdfg159.game.service.log.GameLog
+import io.github.hdfg159.game.service.log.LogService
 import io.github.hdfg159.game.util.GameUtils
 import io.reactivex.Completable
+import io.vertx.core.json.JsonObject
 import io.vertx.reactivex.core.MultiMap
 
 import java.time.LocalDateTime
@@ -16,25 +19,24 @@ import java.time.LocalDateTime
 import static io.github.hdfg159.game.constant.GameConsts.ATTR_AVATAR
 import static io.github.hdfg159.game.constant.GameConsts.ATTR_NAME_CHANNEL_ID
 import static io.github.hdfg159.game.enumeration.CodeEnums.*
-import static io.github.hdfg159.game.enumeration.ProtocolEnums.RES_LOGIN
-import static io.github.hdfg159.game.enumeration.ProtocolEnums.RES_REGISTER
+import static io.github.hdfg159.game.enumeration.ProtocolEnums.*
 
 /**
- * Project:starter
- * Package:io.github.hdfg159.game.service.avatar
- * Created by hdfg159 on 2020/7/17 23:53.
+ * 玩家系统
  */
 @Slf4j
 @Singleton
 class AvatarService extends AbstractService {
 	AvatarData avatarData = AvatarData.instance
 	
+	def logService = LogService.getInstance()
+	
 	@Override
 	Completable init() {
-		response(ProtocolEnums.REQ_LOGIN, login)
-		response(ProtocolEnums.REQ_OFFLINE, offline)
-		response(ProtocolEnums.REQ_HEART_BEAT, heartBeat)
-		response(ProtocolEnums.REQ_REGISTER, register)
+		response(REQ_LOGIN, login)
+		response(REQ_OFFLINE, offline)
+		response(REQ_HEART_BEAT, heartBeat)
+		response(REQ_REGISTER, register)
 		
 		handleEvent(EventEnums.ONLINE, onlineEvent)
 		handleEvent(EventEnums.OFFLINE, offlineEvent)
@@ -104,6 +106,12 @@ class AvatarService extends AbstractService {
 		
 		log.info("玩家登录成功:[${avatar.id}][${avatar.username}][${avatarData.getChannelId(id)}]")
 		
+		logService.log(new GameLog(
+				aid: avatar.id,
+				name: avatar.username,
+				opt: LogEnums.AVATAR_LOGIN
+		))
+		
 		def res = GameMessage.LoginRes.newBuilder()
 				.setUsername(username)
 				.setUserId(id)
@@ -116,22 +124,29 @@ class AvatarService extends AbstractService {
 		def userId = request.userId
 		def channelId = (headers as MultiMap)[ATTR_NAME_CHANNEL_ID]
 		
-		if (userId) {
-			def avatar = avatarData.getById(userId)
-			if (avatar) {
-				synchronized (avatar) {
-					def avatarChannelId = avatarData.getChannelId(userId)
-					if (avatarData.isOnline(userId) && avatarChannelId == channelId) {
-						log.info "玩家进行正常下线请求:[${userId}][${avatarChannelId}]"
-						
-						avatarData.offlineChannel(userId)
-						
-						def event = EventMessage.Offline.newBuilder()
-								.setUsername(avatar.username)
-								.setUserId(avatar.id)
-								.build()
-						publishEvent(EventEnums.OFFLINE, event)
-					}
+		def avatar = avatarData.getById(userId)
+		if (avatar) {
+			synchronized (avatar) {
+				def avatarChannelId = avatarData.getChannelId(userId)
+				if (avatarData.isOnline(userId) && avatarChannelId == channelId) {
+					log.info "玩家进行正常下线请求:[${userId}][${avatarChannelId}]"
+					
+					avatarData.offlineChannel(userId)
+					
+					def event = EventMessage.Offline.newBuilder()
+							.setUsername(avatar.username)
+							.setUserId(avatar.id)
+							.build()
+					publishEvent(EventEnums.OFFLINE, event)
+					
+					logService.log(new GameLog(
+							aid: avatar.id,
+							name: avatar.username,
+							opt: LogEnums.AVATAR_OFFLINE,
+							param: new JsonObject([
+									"force": false
+							])
+					))
 				}
 			}
 		}
@@ -140,8 +155,8 @@ class AvatarService extends AbstractService {
 	}
 	
 	def heartBeat = {headers, params ->
-		def request = params as GameMessage.HeartBeatReq
-		log.info "heart beat ......"
+		// def request = params as GameMessage.HeartBeatReq
+		return GameUtils.sucResMsg(RES_HEART_BEAT, GameMessage.HeartBeatRes.newBuilder().build())
 	}
 	
 	def onlineEvent = {headers, params ->
@@ -180,6 +195,13 @@ class AvatarService extends AbstractService {
 		// 保存缓存，全局数据加入相关信息
 		avatarData.saveCache(registerAvatar)
 		avatarData.addGlobalCache(registerAvatar)
+		
+		logService.log(new GameLog(
+				aid: registerAvatar.id,
+				name: registerAvatar.username,
+				opt: LogEnums.AVATAR_REGISTER
+		))
+		
 		def res = GameMessage.RegisterRes.newBuilder()
 				.setId(registerAvatar.id)
 				.setUsername(registerAvatar.username)
@@ -208,7 +230,7 @@ class AvatarService extends AbstractService {
 			}
 			
 			def channel = avatarData.getChannel(userId)
-			def res = GameUtils.resMsg(ProtocolEnums.RES_OFFLINE, FORCE_OFFLINE)
+			def res = GameUtils.resMsg(RES_OFFLINE, FORCE_OFFLINE)
 			if (channel && channel.isActive()) {
 				channel.writeAndFlush(res)
 				channel.close()
@@ -221,6 +243,15 @@ class AvatarService extends AbstractService {
 					.setUserId(avatar.id)
 					.build()
 			publishEvent(EventEnums.OFFLINE, event)
+			
+			logService.log(new GameLog(
+					aid: avatar.id,
+					name: avatar.username,
+					opt: LogEnums.AVATAR_OFFLINE,
+					param: new JsonObject([
+							"force": true
+					])
+			))
 		}
 	}
 	
