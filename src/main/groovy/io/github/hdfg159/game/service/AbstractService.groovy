@@ -54,14 +54,16 @@ abstract class AbstractService extends AbstractVerticle {
 	@Override
 	Completable rxStart() {
 		this.eventBus = this.@vertx.eventBus()
-		log.info "deploy game service:${this.class.simpleName}"
-		init()
+		init().doOnComplete({
+			log.info "deploy game service complete : ${this.class.simpleName}"
+		})
 	}
 	
 	@Override
 	Completable rxStop() {
-		log.info "undeploy game service:${this.class.simpleName}"
-		destroy()
+		destroy().doOnComplete({
+			log.info "undeploy game service complete : ${this.class.simpleName}"
+		})
 	}
 	
 	/**

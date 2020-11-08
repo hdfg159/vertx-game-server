@@ -44,10 +44,7 @@ class GameLogData extends AbstractVerticle {
 	
 	@Override
 	Completable rxStart() {
-		log.info "deploy data manager ${this.class.simpleName}"
-		
-		this.@vertx.fileSystem()
-				.rxReadFile(LOG_MONGO_CONFIG)
+		this.@vertx.fileSystem().rxReadFile(LOG_MONGO_CONFIG)
 				.map({buffer ->
 					def config = new JsonObject(buffer.delegate)
 					this.client = MongoClient.createShared(this.@vertx, config, LOG_MONGO_DATA_SOURCE)
@@ -56,6 +53,9 @@ class GameLogData extends AbstractVerticle {
 				})
 				.ignoreElement()
 				.concatWith(Completable.fromRunnable({saveLogTask()}))
+				.doOnComplete({
+					log.info "deploy data manager complete : ${this.class.simpleName}"
+				})
 	}
 	
 	@Override

@@ -49,10 +49,7 @@ abstract class AbstractDataManager<D extends TData<String>> extends AbstractVert
 	
 	@Override
 	Completable rxStart() {
-		log.info "deploy data manager ${this.class.simpleName}"
-		
-		this.@vertx.fileSystem()
-				.rxReadFile(MONGO_CONFIG)
+		this.@vertx.fileSystem().rxReadFile(MONGO_CONFIG)
 				.map({buffer ->
 					// 创建共享 mongodb 客户端
 					def config = new JsonObject(buffer.delegate)
@@ -61,12 +58,16 @@ abstract class AbstractDataManager<D extends TData<String>> extends AbstractVert
 					this.client
 				})
 				.ignoreElement()
+				.doOnComplete({
+					log.info "deploy data manager complete : ${this.class.simpleName}"
+				})
 	}
 	
 	@Override
 	Completable rxStop() {
-		log.info "undeploy data manager ${this.class.name}"
-		rxSaveAll()
+		rxSaveAll().doOnComplete({
+			log.info "undeploy data manager complete : ${this.class.simpleName}"
+		})
 	}
 	
 	/**
