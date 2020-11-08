@@ -38,7 +38,7 @@ enum ProtocolEnums {
 	 * 注册
 	 */
 	REQ_REGISTER(1003, GameMessage.RegisterReq.class),
-	RES_REGISTER(-1003, GameMessage.RegisterReq.class),
+	RES_REGISTER(-1003, GameMessage.RegisterRes.class),
 	
 	/**
 	 * 1000~1099 预留编码
