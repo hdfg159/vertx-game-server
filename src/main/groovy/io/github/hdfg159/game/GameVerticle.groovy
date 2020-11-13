@@ -20,17 +20,27 @@ import io.vertx.reactivex.core.AbstractVerticle
 class GameVerticle extends AbstractVerticle {
 	@Override
 	Completable rxStart() {
-		def dataManagers = Completable.mergeArray(
-				this.@vertx.rxDeployVerticle(GameLogData.instance).ignoreElement(),
-				
-				this.@vertx.rxDeployVerticle(AvatarData.instance).ignoreElement(),
-		)
 		
-		def services = this.@vertx.rxDeployVerticle(LogService.getInstance()).ignoreElement()
-				.concatWith(this.@vertx.rxDeployVerticle(AvatarService.getInstance()).ignoreElement())
-				.mergeWith(this.@vertx.rxDeployVerticle(FarmService.getInstance()).ignoreElement())
 		
-		dataManagers.concatWith(services).doOnComplete({
+		Completable.defer({
+			def dataManagers = Completable.mergeArray(
+					this.@vertx.rxDeployVerticle(GameLogData.instance).ignoreElement(),
+					this.@vertx.rxDeployVerticle(AvatarData.instance).ignoreElement(),
+			)
+			
+			def services = Completable.concatArray(
+					this.@vertx.rxDeployVerticle(LogService.getInstance()).ignoreElement(),
+					Completable.mergeArray(
+							this.@vertx.rxDeployVerticle(AvatarService.getInstance()).ignoreElement(),
+							this.@vertx.rxDeployVerticle(FarmService.getInstance()).ignoreElement(),
+					)
+			)
+			
+			Completable.concatArray(
+					dataManagers,
+					services
+			)
+		}).doOnComplete({
 			log.info "deploy ${this.class.simpleName} complete"
 		})
 	}
