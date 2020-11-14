@@ -1,7 +1,9 @@
 package io.github.hdfg159.game.service.log
 
 import groovy.util.logging.Slf4j
+import groovy.yaml.YamlSlurper
 import io.github.hdfg159.common.util.IdUtils
+import io.github.hdfg159.game.constant.GameConsts
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -21,7 +23,6 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.LongAdder
 
-import static io.github.hdfg159.game.constant.GameConsts.LOG_MONGO_CONFIG
 import static io.github.hdfg159.game.constant.GameConsts.LOG_MONGO_DATA_SOURCE
 
 /**
@@ -44,9 +45,9 @@ class GameLogData extends AbstractVerticle {
 	
 	@Override
 	Completable rxStart() {
-		this.@vertx.fileSystem().rxReadFile(LOG_MONGO_CONFIG)
+		this.@vertx.fileSystem().rxReadFile(GameConsts.CONFIG_PATH)
 				.map({buffer ->
-					def config = new JsonObject(buffer.delegate)
+					def config = new JsonObject(new YamlSlurper().parseText(buffer.toString()).database.log)
 					this.client = MongoClient.createShared(this.@vertx, config, LOG_MONGO_DATA_SOURCE)
 					log.info "create db log mongo client,config:${config},result:[${client != null}]"
 					this.client

@@ -2,6 +2,7 @@ package io.github.hdfg159.game.data
 
 import com.github.benmanes.caffeine.cache.*
 import groovy.util.logging.Slf4j
+import groovy.yaml.YamlSlurper
 import io.github.hdfg159.common.util.IdUtils
 import io.github.hdfg159.game.constant.GameConsts
 import io.reactivex.Completable
@@ -10,7 +11,6 @@ import io.vertx.core.json.JsonObject
 import io.vertx.reactivex.core.AbstractVerticle
 import io.vertx.reactivex.ext.mongo.MongoClient
 
-import static io.github.hdfg159.game.constant.GameConsts.MONGO_CONFIG
 import static io.github.hdfg159.game.constant.GameConsts.MONGO_DATA_SOURCE
 import static io.reactivex.schedulers.Schedulers.io
 
@@ -49,10 +49,10 @@ abstract class AbstractDataManager<D extends TData<String>> extends AbstractVert
 	
 	@Override
 	Completable rxStart() {
-		this.@vertx.fileSystem().rxReadFile(MONGO_CONFIG)
+		this.@vertx.fileSystem().rxReadFile(GameConsts.CONFIG_PATH)
 				.map({buffer ->
 					// 创建共享 mongodb 客户端
-					def config = new JsonObject(buffer.delegate)
+					def config = new JsonObject(new YamlSlurper().parseText(buffer.toString()).database.game)
 					this.client = MongoClient.createShared(this.@vertx, config, MONGO_DATA_SOURCE)
 					log.info "create mongo client,config:${config},client:${client}"
 					this.client

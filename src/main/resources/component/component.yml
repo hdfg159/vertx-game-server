@@ -1,0 +1,10 @@
+data-managers:
+  1:
+    - 'io.github.hdfg159.game.service.log.GameLogData'
+    - 'io.github.hdfg159.game.service.avatar.AvatarData'
+services:
+  1:
+    - 'io.github.hdfg159.game.service.log.LogService'
+  2:
+    - 'io.github.hdfg159.game.service.avatar.AvatarService'
+    - 'io.github.hdfg159.game.service.farm.FarmService'
