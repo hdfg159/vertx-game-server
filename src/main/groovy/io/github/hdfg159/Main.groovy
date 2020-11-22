@@ -92,6 +92,7 @@ class Main {
 		def beans = jmx.export {
 			bean(
 					target: new GroovyUtils() {},
+					name: "io.github.hdfg159.Main:type=GroovyUtils",
 					attributes: [],
 					operations: "*"
 			)

@@ -3,6 +3,7 @@ package io.github.hdfg159.game.enumeration
 import com.google.protobuf.Message
 import io.github.hdfg159.game.constant.GameConsts
 import io.github.hdfg159.game.domain.dto.EventMessage
+import io.github.hdfg159.game.service.AbstractService
 
 /**
  * Project:starter
@@ -40,5 +41,9 @@ enum EventEnums {
 	
 	String address() {
 		"${GameConsts.ADDRESS_EVENT}${event}"
+	}
+	
+	void handle(AbstractService service, Closure closure) {
+		service.handleEvent(this, closure)
 	}
 }

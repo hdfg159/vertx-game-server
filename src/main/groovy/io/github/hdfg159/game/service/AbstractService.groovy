@@ -71,7 +71,7 @@ abstract class AbstractService extends AbstractVerticle {
 	 * @param protocol 协议
 	 * @param closure 闭包执行体
 	 */
-	protected void response(ProtocolEnums protocol, Closure closure) {
+	void response(ProtocolEnums protocol, Closure closure) {
 		def address = protocol.address()
 		eventBus.consumer(address)
 				.toFlowable()
@@ -126,7 +126,7 @@ abstract class AbstractService extends AbstractVerticle {
 	 * @param eventEnums 事件枚举
 	 * @param run 闭包执行体
 	 */
-	protected void handleEvent(EventEnums eventEnums, Closure run) {
+	void handleEvent(EventEnums eventEnums, Closure run) {
 		def address = eventEnums.address()
 		eventBus.consumer(address)
 				.toFlowable()

@@ -6,7 +6,6 @@ import io.github.hdfg159.game.domain.dto.GameMessage
 import io.github.hdfg159.game.enumeration.EventEnums
 import io.github.hdfg159.game.enumeration.ProtocolEnums
 import io.github.hdfg159.game.service.AbstractService
-import io.github.hdfg159.game.util.GameUtils
 import io.reactivex.Completable
 
 /**
@@ -23,10 +22,10 @@ import io.reactivex.Completable
 class FarmService extends AbstractService {
 	@Override
 	Completable init() {
-		response(ProtocolEnums.REQ_TEST, test)
+		ProtocolEnums.REQ_TEST.handle(this, test)
 		
-		handleEvent(EventEnums.OFFLINE, offlineEvent)
-		handleEvent(EventEnums.ONLINE, onlineEvent)
+		EventEnums.OFFLINE.handle(this, offlineEvent)
+		EventEnums.ONLINE.handle(this, onlineEvent)
 		return Completable.complete()
 	}
 	
@@ -37,10 +36,11 @@ class FarmService extends AbstractService {
 	
 	def test = {headers, params ->
 		// throw new RuntimeException("error test========================")
-		def res = GameMessage.TestRes.newBuilder()
-				.setStr("teststsadasdasdasd")
-				.build()
-		GameUtils.sucResMsg(ProtocolEnums.RES_TEST, res)
+		ProtocolEnums.RES_TEST.sucRes(
+				GameMessage.TestRes.newBuilder()
+						.setStr("teststsadasdasdasd")
+						.build()
+		)
 	}
 	
 	def onlineEvent = {headers, params ->

@@ -48,8 +48,7 @@ class ConnectionHandler extends SimpleChannelInboundHandler<GameMessage.Message>
 				// 响应关掉channel
 				channelData.remove(ctx.channel())
 				
-				def message = GameUtils.resMsg(RES_PUSH, MAX_CONNECTION_LIMIT)
-				ctx.writeAndFlush(message)
+				ctx.writeAndFlush(RES_PUSH.res(MAX_CONNECTION_LIMIT))
 				ctx.close()
 				return
 			}
