@@ -16,6 +16,7 @@ import io.vertx.reactivex.core.AbstractVerticle
 import io.vertx.reactivex.core.MultiMap
 import io.vertx.reactivex.core.eventbus.EventBus
 
+import static io.github.hdfg159.game.constant.GameConsts.ATTR_NAME_AVATAR
 import static io.github.hdfg159.game.constant.GameConsts.ATTR_NAME_CHANNEL_ID
 import static io.github.hdfg159.game.enumeration.CodeEnums.ERROR
 import static io.reactivex.schedulers.Schedulers.io
@@ -119,6 +120,15 @@ abstract class AbstractService extends AbstractVerticle {
 	 */
 	protected void publishEvent(EventEnums enums, Message data) {
 		GameUtils.publishEvent(eventBus, enums, data)
+	}
+	
+	/**
+	 * 获取用户ID
+	 * @param headers 头信息
+	 * @return ID
+	 */
+	protected static String getHeaderAvatarId(headers) {
+		return headers ?[ATTR_NAME_AVATAR] as String
 	}
 	
 	/**
