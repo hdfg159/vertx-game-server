@@ -21,21 +21,21 @@ application {
 	mainClassName = "io.github.hdfg159.Main"
 }
 
-def vertxVersion = "4.0.0.CR1"
-def log4jVersion = "2.13.3"
+def vertxVersion = "4.0.0"
+def log4jVersion = "2.14.0"
 def protobufVersion = "3.12.2"
-def caffeineVersion = "2.8.6"
-def jacksonVersion = "2.11.3"
-def groovyVersion = "3.0.6"
+def caffeineVersion = "2.8.8"
+def jacksonVersion = "2.12.0"
+def groovyVersion = "3.0.7"
 
 dependencies {
 	implementation "io.vertx:vertx-rx-java2:$vertxVersion"
-	
+
 	implementation "io.vertx:vertx-lang-groovy:$vertxVersion"
 	implementation "org.codehaus.groovy:groovy-jmx:${groovyVersion}"
 	implementation "org.codehaus.groovy:groovy-datetime:${groovyVersion}"
 	implementation "org.codehaus.groovy:groovy-yaml:${groovyVersion}"
-	
+
 	implementation "io.vertx:vertx-mongo-client:$vertxVersion"
 	
 	implementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
