@@ -14,21 +14,28 @@ import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler
 import io.netty.handler.codec.http.websocketx.WebSocketVersion
 import io.netty.handler.codec.protobuf.ProtobufDecoder
 import io.netty.handler.codec.protobuf.ProtobufEncoder
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender
 import io.netty.handler.timeout.IdleStateHandler
 
 import java.util.concurrent.TimeUnit
 
 /**
- * Project:starter
- * <p>
- * Package:io.github.hdfg159.game
- * <p>
  * 游戏客户端通道初始化
  * @date 2020/7/15 10:30
  * @author zhangzhenyu
  */
 class GameClientChannelInitializer extends ChannelInitializer<Channel> {
-	
+	private static final LogHandler LOG_HANDLER = new LogHandler()
+	private static final HeartbeatHandler HEART_BEAT_HANDLER = new HeartbeatHandler()
+
+	private static final ProtobufEncoder PROTOBUF_ENCODER = new ProtobufEncoder()
+	private static final ProtobufDecoder PROTOBUF_DECODER = new ProtobufDecoder(GameMessage.Message.getDefaultInstance())
+
+	private static final ProtobufVarint32LengthFieldPrepender PROTOBUF_LENGTH_FIELD_PREPENDER = new ProtobufVarint32LengthFieldPrepender()
+
+	private static final WebSocketBinaryMessageInHandler WEBSOCKET_BINARY_IN_HANDLER = new WebSocketBinaryMessageInHandler()
+	private static final WebSocketBinaryMessageOutHandler WEBSOCKET_BINARY_OUT_HANDLER = new WebSocketBinaryMessageOutHandler()
+
 	@Override
 	protected void initChannel(Channel ch) throws Exception {
 		def handShaker = WebSocketClientHandshakerFactory.newHandshaker(
@@ -38,25 +45,25 @@ class GameClientChannelInitializer extends ChannelInitializer<Channel> {
 				false,
 				new DefaultHttpHeaders()
 		)
-		
+
 		ch.pipeline()
 				.addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS))
-				
+
 				.addLast(new HttpClientCodec())
 				.addLast(new HttpObjectAggregator(65536))
-				
+
 				.addLast(new WebSocketClientProtocolHandler(handShaker))
-				.addLast(new WebSocketBinaryMessageInHandler())
-				.addLast(new WebSocketBinaryMessageOutHandler())
-		
+				.addLast(WEBSOCKET_BINARY_IN_HANDLER)
+				.addLast(WEBSOCKET_BINARY_OUT_HANDLER)
+
 		// .addLast(new ProtobufVarint32FrameDecoder())
-				.addLast(new ProtobufDecoder(GameMessage.Message.getDefaultInstance()))
-		
-		// .addLast(new ProtobufVarint32LengthFieldPrepender())
-				.addLast(new ProtobufEncoder())
-				
-				.addLast(new LogHandler())
-				
-				.addLast(new HeartbeatHandler())
+				.addLast(PROTOBUF_DECODER)
+
+		// .addLast(PROTOBUF_LENGTH_FIELD_PREPENDER)
+				.addLast(PROTOBUF_ENCODER)
+
+				.addLast(LOG_HANDLER)
+
+				.addLast(HEART_BEAT_HANDLER)
 	}
 }
